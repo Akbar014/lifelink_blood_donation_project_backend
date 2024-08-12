@@ -11,6 +11,7 @@ router.register ('donation-requests', views.DonationRequestViewset)
 router.register ('donation-history', views.DonationHistoryViewSet, basename='donation-history')
 router.register ('donation-accepted', views.DonationAcceptedViewSet, basename='donation-accepted')
 router.register('users', views.UserViewSet, basename='user')
+router.register('contactForm', views.ContactViewSet, basename='contactForm')
 
 
 urlpatterns = [

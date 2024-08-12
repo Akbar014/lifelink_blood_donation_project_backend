@@ -64,7 +64,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 
+class UserSerializer(serializers.ModelSerializer):
     
+    class Meta:
+        model = models.User
+        fields = '__all__'  
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        instance = super().update(instance, validated_data)
+        if password:
+            instance.set_password(password)
+            instance.save()
+        return instance
 
 class UserAccountSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', required=False)
@@ -73,6 +85,17 @@ class UserAccountSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', required=False)
     image = serializers.ImageField(allow_null=True, required=False)
     # image_url = serializers.SerializerMethodField()
+
+    # Fields from the UserAccount model
+    mobile_no = serializers.CharField(required=False)
+    age = serializers.IntegerField(required=False)
+    blood_group = serializers.CharField(required=False)
+    gender = serializers.CharField(required=False)
+    address = serializers.CharField(required=False)
+    last_donation_date = serializers.DateField(required=False)
+    is_available_for_donation = serializers.BooleanField(required=False)
+
+
     class Meta:
         model = models.UserAccount
         fields = [
@@ -88,20 +111,30 @@ class UserAccountSerializer(serializers.ModelSerializer):
         return None
 
     def update(self, instance, validated_data):
-        
+        # Handle nested user update
         user_data = validated_data.pop('user', {})
+        user_serializer = UserSerializer(instance=instance.user, data=user_data, partial=True)
+        user_serializer.is_valid(raise_exception=True)
+        user_serializer.save()
+
+        # Handle UserAccount update
+        return super().update(instance, validated_data)
+
+    # def update(self, instance, validated_data):
+        
+    #     user_data = validated_data.pop('user', {})
 
         
-        for attr, value in user_data.items():
-            setattr(instance.user, attr, value)
-        instance.user.save()
+    #     for attr, value in user_data.items():
+    #         setattr(instance.user, attr, value)
+    #     instance.user.save()
 
         
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
+    #     for attr, value in validated_data.items():
+    #         setattr(instance, attr, value)
+    #     instance.save()
 
-        return instance
+    #     return instance
 
 
 
@@ -118,8 +151,16 @@ class DonationHistorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+
 class DonationAcceptedSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(many=False)
     class Meta:
         model = models.DonationAccepted
+        fields = '__all__'
+
+class ContactSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(many=False)
+    class Meta:
+        model = models.ContactForm
         fields = '__all__'

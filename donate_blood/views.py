@@ -22,7 +22,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 # for sending email
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.shortcuts import redirect
 # Create your views here.
@@ -100,8 +100,22 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_available_for_donation=True)
+        # return super().get_queryset().filter(is_available_for_donation=True)
+        return super().get_queryset()
 
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        # Update using the UserAccountSerializer
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
+        
     @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
     def blood_group_filter(self, request):
         blood_group = request.query_params.get('blood_group', None)
@@ -110,8 +124,6 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(blood_group=blood_group)
         serializer = serializers.UserAccountSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 class UserRegistrationApiView(APIView):
@@ -279,6 +291,30 @@ class UserLogoutView(APIView):
         return redirect('login')
 
 
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = models.ContactForm.objects.all()
+    serializer_class = serializers.ContactSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        # return super().get_queryset().filter(is_available_for_donation=True)
+        return super().get_queryset()
+
+    def perform_create(self, serializer):
+        # Save the form data
+        contact_form = serializer.save(user=self.request.user)
+
+        # Send an email to the user
+        send_mail(
+            subject=f"Thank you for contacting us: {contact_form.subject}",
+            message=f"Dear {contact_form.name},\n\n"
+                    f"Thank you for reaching out to us. We have received your message:\n\n"
+                    f"We will get back to you shortly.\n\n"
+                    f"Best regards,\nLifeLink",
+            from_email='lifelink@example.com',  # Replace with your sender email
+            recipient_list=[contact_form.email],  # Email to the user
+            fail_silently=False,
+        )
 
 
  

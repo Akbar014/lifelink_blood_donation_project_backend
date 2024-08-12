@@ -46,4 +46,17 @@ class DonationAccepted(models.Model):
     donation_request = models.ForeignKey(DonationRequest, on_delete=models.CASCADE )
     date = models.DateField( auto_now_add=True)
 
+class ContactForm (models.Model):
+    user = models.ForeignKey (User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=254)
+    subject = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.user.username
+
+
+
+
 
