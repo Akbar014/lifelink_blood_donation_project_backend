@@ -71,12 +71,7 @@ INSTALLED_APPS = [
 
 ]
 
-# Cloudinary settings
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dxa4o1mld',
-    'API_KEY': '375181142472435',
-    'API_SECRET': 'sIbHWYj22GKxttjtvUSuolhHvQ8',
-}
+
 
 cloudinary.config(
     cloud_name='dxa4o1mld',  # Replace with your actual Cloudinary cloud name
