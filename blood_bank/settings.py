@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
 import environ
 env = environ.Env()
 environ.Env.read_env()
@@ -19,6 +20,8 @@ environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+import cloudinary
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -63,7 +66,23 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
+    'cloudinary',
+    'cloudinary_storage',
+
 ]
+
+# Cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dxa4o1mld',
+    'API_KEY': '375181142472435',
+    'API_SECRET': 'sIbHWYj22GKxttjtvUSuolhHvQ8',
+}
+
+cloudinary.config(
+    cloud_name='dxa4o1mld',  # Replace with your actual Cloudinary cloud name
+    api_key='375181142472435',        # Replace with your actual Cloudinary API key
+    api_secret='sIbHWYj22GKxttjtvUSuolhHvQ8',  # Replace with your actual Cloudinary API secret
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -111,13 +130,20 @@ WSGI_APPLICATION = 'blood_bank.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+DATABASES = {
+    'default': dj_database_url.config(
+        # Feel free to alter this value to suit your needs.
+        default='postgresql://new:Dm1wfDiNXYftBsLnhHbRLLJrB96c9T31@dpg-cqut3qbv2p9s73e74ksg-a.oregon-postgres.render.com/lifelink_ct2h',
+                
+    )
+}
 
 REST_FRAMEWORK = {
 
@@ -171,6 +197,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STATIC_URL = 'static/'
 STATIC_DIRS = [

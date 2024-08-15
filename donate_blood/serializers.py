@@ -20,7 +20,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     gender = serializers.ChoiceField(choices = GENDER,  required=True)
     age = serializers.IntegerField()
     mobile_no = serializers.IntegerField()
-    address = serializers.CharField(required=True)
+    address = serializers.CharField(required=False)
 
     class Meta:
         model = User
@@ -36,7 +36,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         password2 = self.validated_data['confirm_password']
         blood_group = self.validated_data['blood_group']
         age = self.validated_data['age']
-        address = self.validated_data['address']
+        # address = self.validated_data['address']
         gender = self.validated_data['gender']
         mobile_no = self.validated_data['mobile_no']
 
@@ -55,7 +55,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             user = user,
             age = age,
             blood_group = blood_group,
-            address = address,
+            # address = address,
             gender = gender,
             mobile_no = mobile_no,
 
@@ -104,6 +104,17 @@ class UserAccountSerializer(serializers.ModelSerializer):
             'is_available_for_donation'
         ]
     
+    def create(self, validated_data):
+        user_data = validated_data.pop('user', {})
+        
+        # Create the User instance
+        user = User.objects.create(**user_data)
+        
+        # Create the UserAccount instance with the new User
+        user_account = models.UserAccount.objects.create(user=user, **validated_data)
+        
+        return user_account
+
     def get_image_url(self, obj):
         request = self.context.get('request')
         if obj.image:
