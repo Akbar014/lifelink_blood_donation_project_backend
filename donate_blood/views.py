@@ -294,8 +294,7 @@ class UserLogoutView(APIView):
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = models.ContactForm.objects.all()
     serializer_class = serializers.ContactSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
+    permission_classes = [AllowAny] 
     def get_queryset(self):
         # return super().get_queryset().filter(is_available_for_donation=True)
         return super().get_queryset()
