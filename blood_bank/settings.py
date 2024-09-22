@@ -124,20 +124,20 @@ WSGI_APPLICATION = 'blood_bank.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-    'default': dj_database_url.config(
-        # Feel free to alter this value to suit your needs.
-        default='postgresql://new:Dm1wfDiNXYftBsLnhHbRLLJrB96c9T31@dpg-cqut3qbv2p9s73e74ksg-a.oregon-postgres.render.com/lifelink_ct2h',
-                
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Feel free to alter this value to suit your needs.
+#         default='postgresql://new:Dm1wfDiNXYftBsLnhHbRLLJrB96c9T31@dpg-cqut3qbv2p9s73e74ksg-a.oregon-postgres.render.com/lifelink_ct2h',
+                
+#     )
+# }
 
 REST_FRAMEWORK = {
 
