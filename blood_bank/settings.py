@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY"),
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
 
 # Access-Control-Allow-Origin: ["*"]
 # CSRF_TRUSTED_ORIGINS = ["*"]
@@ -50,6 +50,9 @@ CSRF_TRUSTED_ORIGINS = ['https://lifelink-4bu4.onrender.com','http://127.0.0.1:5
 # Application definition
 
 INSTALLED_APPS = [
+
+    "whitenoise.runserver_nostatic",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,10 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
 
-
     'donate_blood',
-
-
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -80,6 +80,7 @@ cloudinary.config(
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -118,18 +119,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'blood_bank.wsgi.application'
+WSGI_APPLICATION = 'blood_bank.wsgi.app'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # DATABASES = {
 #     'default': dj_database_url.config(
@@ -138,6 +139,19 @@ DATABASES = {
                 
 #     )
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.vexfwyscmhnvegnmhxxg',
+        'PASSWORD': 'Fe9k7BV8tTizUuAm',
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
+        'PORT': '6543'
+    }
+}
+
 
 REST_FRAMEWORK = {
 
@@ -197,6 +211,7 @@ USE_TZ = True
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_DIRS = [
     BASE_DIR / "static",
 ]
